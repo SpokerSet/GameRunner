@@ -8,12 +8,17 @@ public class Menu : MonoBehaviour
     public Text[] missionDescription, missionRewad, missionProgress;
     public GameObject[] rewardButton;
     public Text coinsText;
+    public Text costText;
+    public GameObject[] characters;
+
+    private int characterIndex = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         SetMission();
         UpdateCoins(GameManager.gm.coins);
+        
     }
 
     // Update is called once per frame
@@ -29,7 +34,14 @@ public class Menu : MonoBehaviour
 
     public void StartRun()
     {
-        GameManager.gm.StartRun();
+        if(GameManager.gm.characterCost[characterIndex] <= GameManager.gm.coins)
+        {
+            GameManager.gm.coins -= GameManager.gm.characterCost[characterIndex];
+            GameManager.gm.characterCost[characterIndex] = 0;
+            GameManager.gm.Save();
+            GameManager.gm.StartRun(characterIndex);
+        }
+        
     }
 
     public void SetMission()
@@ -55,5 +67,33 @@ public class Menu : MonoBehaviour
         UpdateCoins(GameManager.gm.coins);
         rewardButton[missionIndex].SetActive(false);
         GameManager.gm.GenerateMission(missionIndex);
+    }
+
+    public void ChangeCharacters(int index)
+    {
+        characterIndex += index;
+        if(characterIndex >= characters.Length)
+        {
+            characterIndex = 0;
+        }
+        else if(characterIndex < 0)
+        {
+            characterIndex = characters.Length - 1;
+        }
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (i == characterIndex)
+                characters[i].SetActive(true);
+            else
+                characters[i].SetActive(false);
+        }
+
+        string cost = "";
+        if(GameManager.gm.characterCost[characterIndex] != 0)
+        {
+            cost = GameManager.gm.characterCost[characterIndex].ToString();
+        }
+        costText.text = cost;
     }
 }

@@ -256,12 +256,13 @@ public class Player : MonoBehaviour
 
     public void CallMenu()
     {
+        GameManager.gm.coins += coins;
         GameManager.gm.EndRun();
     }
 
     public void IncreaseSpeed()
     {
-        speed *= 1.15f;
+        speed *= 1.5f;
         if (speed >= maxSpeed)
         {
             speed = maxSpeed;
